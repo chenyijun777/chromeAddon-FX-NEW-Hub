@@ -17,7 +17,8 @@
       "https://assets.wor.jp/rss/rdf/nikkei/markets.rdf",
       "https://assets.wor.jp/rss/rdf/reuters/business.rdf",
       "https://assets.wor.jp/rss/rdf/bloomberg/top.rdf",
-      "https://assets.wor.jp/rss/rdf/nikkei/forex.rdf"
+      "https://assets.wor.jp/rss/rdf/nikkei/forex.rdf",
+      "https://wonderfx.jp/?xml"
     ]
   }
 } 
