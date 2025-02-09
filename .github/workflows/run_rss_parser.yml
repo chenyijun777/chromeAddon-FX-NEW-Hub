@@ -36,4 +36,4 @@ jobs:
       - name: Run RSS Parser
         run: |
           cd Fx\ Dashborad/rss_data
-          python rss_parser.py
+          python main.py
