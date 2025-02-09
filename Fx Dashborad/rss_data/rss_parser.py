@@ -11,6 +11,7 @@ from io import BytesIO
 import os
 from requests.exceptions import RequestException
 import base64
+from db_utils import db_manager
 
 class RSSParser:
     def __init__(self):
@@ -20,10 +21,6 @@ class RSSParser:
         }
         self.session = requests.Session()
         self.image_cache = {}
-
-        # Supabase 配置
-        self.supabase_url = 'https://jfhncvkdqrhasbffxeub.supabase.co'
-        self.supabase_key = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpmaG5jdmtkcXJoYXNiZmZ4ZXViIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTczNzg4NTIyNiwiZXhwIjoyMDUzNDYxMjI2fQ.mezMLhqmDWy3oUTS8y9aqFDXgtol7L8ULUvoFUAN3-Y'
 
     def get_rss_urls(self, content_type='news'):
         """从本地配置文件读取RSS源"""
@@ -56,62 +53,8 @@ class RSSParser:
         return default_sources
 
     def save_to_supabase(self, articles, content_type, nation):
-        """保存数据到 Supabase，并删除7天前的数据"""
-        headers = {
-            'apikey': self.supabase_key,
-            'Authorization': f'Bearer {self.supabase_key}',
-            'Content-Type': 'application/json',
-            'Prefer': 'resolution=merge-duplicates'
-        }
-
-        # 删除7天前的数据
-        seven_days_ago = (datetime.now() - timedelta(days=7)).strftime('%Y-%m-%d %H:%M:%S')
-        try:
-            delete_response = requests.delete(
-                f'{self.supabase_url}/rest/v1/rss',
-                headers=headers,
-                params={
-                    'update_date': f'lt.{seven_days_ago}'
-                }
-            )
-            if delete_response.status_code == 200:
-                print(f"Successfully deleted articles older than {seven_days_ago}")
-            else:
-                print(f"Error deleting old articles: {delete_response.status_code}")
-        except Exception as e:
-            print(f"Exception while deleting old articles: {str(e)}")
-
-        # 保存新文章
-        for article in articles:
-            site = urlparse(article['link']).netloc
-            data = {
-                'title': article['title'],
-                'link': article['link'],
-                'image_url': article.get('image_url', ''),
-                'update_date': article.get('date', datetime.now().strftime('%Y-%m-%d %H:%M:%S')),
-                'nation': nation,
-                'site': site
-            }
-            
-            if content_type == 'news':
-                data['newsFlag'] = 'news'
-            elif content_type == 'strategy':
-                data['strategyFlag'] = 'strategy'
-
-            try:
-                response = requests.post(
-                    f'{self.supabase_url}/rest/v1/rss',
-                    headers=headers,
-                    json=data
-                )
-                
-                if response.status_code in [201, 200]:
-                    print(f"Successfully saved/updated article: {article['title']}")
-                else:
-                    print(f"Error saving article: {article['title']}, Status: {response.status_code}")
-                    
-            except Exception as e:
-                print(f"Exception while saving article: {str(e)}")
+        """使用共通模块保存到 Supabase"""
+        return db_manager.save_to_supabase(articles, content_type, nation)
 
     def parse_all_feeds(self, content_type='news'):
         """解析所有配置的RSS源并保存到 Supabase"""
