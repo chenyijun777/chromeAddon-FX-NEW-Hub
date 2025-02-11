@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "FX RSS Feed Panel",
+  "name": "FX News Hub",
   "version": "1.0",
   "description": "A Chrome side panel extension showing FX RSS feeds",
   "permissions": [
