@@ -2,7 +2,8 @@
   "rssSources": {
     "zh": [
       "https://cn.investing.com/rss/commodities_Opinion.rss",
-      "https://cn.investing.com/rss/commodities_Strategy.rss"
+      "https://cn.investing.com/rss/commodities_Strategy.rss",
+      "https://www.ifcmfx.cn/api/market-overview-list.xml"
     ],
     "en": [
       "https://www.marketpulse.com/feed/"
